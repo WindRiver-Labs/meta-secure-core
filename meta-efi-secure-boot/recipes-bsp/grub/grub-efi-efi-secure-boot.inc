@@ -20,6 +20,7 @@ SRC_URI += "\
     file://mok2verify-support-to-verify-non-PE-file-with-PKCS-7.patch \
     file://grub-efi.cfg \
     file://boot-menu.inc \
+    file://boot-menu-hddimg.inc \
     ${EXTRA_SRC_URI} \
 "
 
@@ -108,6 +109,7 @@ fakeroot python do_sign_class-target() {
     sb_sign(dir + grub_image, dir + grub_image, d)
     uks_sel_sign(dir + 'grub.cfg', d)
     uks_sel_sign(dir + 'boot-menu.inc', d)
+    uks_sel_sign(image_dir + '/../boot-menu-hddimg.inc', d)
 
     if d.getVar('UEFI_SB', True) == "1":
         uks_sel_sign(dir + 'efi-secure-boot.inc', d)
@@ -126,6 +128,9 @@ do_deploy_class-target() {
     install -d "${DEPLOYDIR}/efi-unsigned"
     install -m 0644 "${B}/${GRUB_IMAGE}" "${DEPLOYDIR}/efi-unsigned"
     cp -af "${D}${EFI_BOOT_PATH}/${GRUB_TARGET}-efi" "${DEPLOYDIR}/efi-unsigned"
+
+    cp -f "${WORKDIR}/boot-menu-hddimg.inc" "${DEPLOYDIR}"
+    cp -f "${WORKDIR}/boot-menu-hddimg.inc.p7b" "${DEPLOYDIR}"
 }
 
 FILES_${PN} += "/boot/efi"
