@@ -2,9 +2,10 @@
 # loading image is changed to the chainloader command instead of
 # the linux command.
 
-menuentry "Sample EFI boot" --unrestricted {
+menuentry "Wind River Linux LTS 18 Sample EFI boot" --unrestricted {
     savedefault
     set fallback=1
-    linux /bzImage root=/dev/hda2 ro rootwait
+    search --no-floppy --label --set=root boot
+    linux /bzImage root=LABEL=root ro rootwait
     initrd /initrd
 }
