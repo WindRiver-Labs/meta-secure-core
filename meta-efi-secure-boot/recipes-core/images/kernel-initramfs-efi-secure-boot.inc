@@ -18,20 +18,19 @@ do_deploy() {
     install -d "${DEPLOYDIR}"
     for SIG in ${D}/boot/*.p7b; do
         install -m 0644 ${SIG} ${DEPLOYDIR}
+
+    done
+
+    for compr in ${INITRAMFS_FSTYPES}; do
+        if [ -e "${D}/boot/${INITRAMFS_IMAGE}${INITRAMFS_EXT_NAME}.${compr}.p7b" -a "${BUNDLE}" = "0" ]; then
+            ln -sf "${INITRAMFS_IMAGE}${INITRAMFS_EXT_NAME}.${INITRAMFS_FSTYPES}.p7b" "${D}/boot/initrd.p7b"
+        fi
+
+        if [ -e "${KERNEL_IMAGETYPE}-initramfs${INITRAMFS_EXT_NAME}.p7b" -a "${BUNDLE}" = "1"]; then
+            ln -sf "${KERNEL_IMAGETYPE}-initramfs${INITRAMFS_EXT_NAME}.p7b" "${D}/boot/initrd.p7b"
+        fi
+
     done
 }
 addtask deploy after do_install before do_build
 
-python do_package_prepend () {
-    if d.getVar('BUNDLE') == '1':
-        d.appendVar(d.expand('ALTERNATIVE_${PN}'), ' ' + d.expand('${KERNEL_IMAGETYPE}' + '-initramfs.p7b'))
-        d.setVarFlag('ALTERNATIVE_LINK_NAME', d.expand('${KERNEL_IMAGETYPE}') + '-initramfs.p7b', d.expand('/boot/${KERNEL_IMAGETYPE}-initramfs.p7b'))
-        d.setVarFlag('ALTERNATIVE_TARGET', d.expand('${KERNEL_IMAGETYPE}') + '-initramfs.p7b', d.expand('/boot/${KERNEL_IMAGETYPE}-initramfs${INITRAMFS_EXT_NAME}.p7b'))
-        d.setVarFlag('ALTERNATIVE_PRIORITY', d.expand('${KERNEL_IMAGETYPE}') + '-initramfs.p7b', '50101')
-    else:
-        for compr in d.getVar('INITRAMFS_FSTYPES').split():
-            d.appendVar(d.expand('ALTERNATIVE_${PN}'), ' ' + d.expand('${INITRAMFS_IMAGE}') + '.p7b')
-            d.setVarFlag('ALTERNATIVE_LINK_NAME', d.expand('${INITRAMFS_IMAGE}') + '.p7b', d.expand('/boot/${INITRAMFS_IMAGE}.p7b'))
-            d.setVarFlag('ALTERNATIVE_TARGET', d.expand('${INITRAMFS_IMAGE}') + '.p7b', d.expand('/boot/${INITRAMFS_IMAGE}${INITRAMFS_EXT_NAME}.' + compr + '.p7b'))
-            d.setVarFlag('ALTERNATIVE_PRIORITY', d.expand('${INITRAMFS_IMAGE}') + '.p7b', '50101')
-}
