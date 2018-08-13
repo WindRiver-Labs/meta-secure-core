@@ -16,21 +16,22 @@ do_sign[prefuncs] += "check_deploy_keys"
 
 do_deploy() {
     install -d "${DEPLOYDIR}"
-    for SIG in ${D}/boot/*.p7b; do
-        install -m 0644 ${SIG} ${DEPLOYDIR}
 
-    done
-
-    for compr in ${INITRAMFS_FSTYPES}; do
-        if [ -e "${D}/boot/${INITRAMFS_IMAGE}${INITRAMFS_EXT_NAME}.${compr}.p7b" -a "${BUNDLE}" = "0" ]; then
-            ln -sf "${INITRAMFS_IMAGE}${INITRAMFS_EXT_NAME}.${INITRAMFS_FSTYPES}.p7b" "${D}/boot/initrd.p7b"
-        fi
-
-        if [ -e "${KERNEL_IMAGETYPE}-initramfs${INITRAMFS_EXT_NAME}.p7b" -a "${BUNDLE}" = "1"]; then
+    if [ "${BUNDLE}" = "0" ]; then
+        for compr in ${INITRAMFS_FSTYPES}; do
+            if [ -e "${D}/boot/${INITRAMFS_IMAGE}${INITRAMFS_EXT_NAME}.${compr}.p7b" ]; then
+                ln -sf "${INITRAMFS_IMAGE}${INITRAMFS_EXT_NAME}.${compr}.p7b" "${D}/boot/initrd.p7b"
+                install -m 0644 "${D}/boot/${INITRAMFS_IMAGE}${INITRAMFS_EXT_NAME}.${compr}.p7b" \
+                                               "${DEPLOYDIR}/${INITRAMFS_IMAGE}-${MACHINE}.${compr}.p7b"
+            fi
+        done
+    else
+        if [ -e "${KERNEL_IMAGETYPE}-initramfs${INITRAMFS_EXT_NAME}.p7b" ]; then
             ln -sf "${KERNEL_IMAGETYPE}-initramfs${INITRAMFS_EXT_NAME}.p7b" "${D}/boot/initrd.p7b"
+            install -m 0644 "${D}/boot/${KERNEL_IMAGETYPE}-initramfs${INITRAMFS_EXT_NAME}.p7b" \
+                                               "${DEPLOYDIR}/${INITRAMFS_IMAGE}-${MACHINE}.${INITRAMFS_FSTYPES}.p7b"
         fi
-
-    done
+    fi
 }
 addtask deploy after do_install before do_build
 
