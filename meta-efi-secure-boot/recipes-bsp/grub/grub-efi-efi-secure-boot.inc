@@ -21,6 +21,7 @@ SRC_URI += "\
     file://grub-efi.cfg \
     file://boot-menu.inc \
     file://boot-menu-hddimg.inc \
+    file://grub-efi.patch \
     ${EXTRA_SRC_URI} \
 "
 

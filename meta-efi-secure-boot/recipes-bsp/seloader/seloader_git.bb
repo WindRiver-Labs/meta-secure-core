@@ -28,6 +28,7 @@ PV = "0.4.6+git${SRCPV}"
 
 SRC_URI = "\
     git://github.com/jiazhang0/SELoader.git \
+    file://seloader.patch \
 "
 SRCREV = "8b90f76a8df51d9020e67824026556434f407086"
 
