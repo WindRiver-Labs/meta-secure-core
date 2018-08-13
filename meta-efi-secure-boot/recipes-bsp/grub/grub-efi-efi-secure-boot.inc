@@ -22,6 +22,7 @@ SRC_URI += "\
     file://mok2verify-multiboot.patch \
     file://grub-efi.cfg \
     file://boot-menu.inc \
+    file://grub-efi.patch \
     ${EXTRA_SRC_URI} \
 "
 
