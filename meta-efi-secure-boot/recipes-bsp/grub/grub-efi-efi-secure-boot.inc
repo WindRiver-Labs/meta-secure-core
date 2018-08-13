@@ -32,6 +32,7 @@ SRC_URI_append_class-target += "\
     file://grub-efi.cfg \
     file://boot-menu.inc \
     ${@d.getVar('GRUB_MOKVERIFY_PATCH', True) if d.getVar('UEFI_SELOADER', True) == '1' else ''} \
+    file://grub-efi.patch \
     ${EXTRA_SRC_URI} \
 "
 
