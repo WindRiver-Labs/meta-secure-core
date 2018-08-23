@@ -25,6 +25,9 @@ SRC_URI += "\
     ${EXTRA_SRC_URI} \
 "
 
+# not yet compatible with grub-efi.patch
+COMPATIBLE_HOST_x86 = 'null'
+
 # functions efi_call_foo and efi_shim_exit are not implemented for arm64 yet
 COMPATIBLE_HOST_aarch64 = 'null'
 
