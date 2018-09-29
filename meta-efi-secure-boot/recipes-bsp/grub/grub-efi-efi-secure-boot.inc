@@ -4,6 +4,10 @@ EXTRA_SRC_URI = "\
     ${@'file://efi-secure-boot.inc file://password.inc' if d.getVar('UEFI_SB', True) == '1' else ''} \
 "
 
+# We cannot yet use this patch for 32 bit systems.
+GRUB_EFI_PATCH = ""
+GRUB_EFI_PATCH_x86-64 = "file://grub-efi.patch"
+
 SRC_URI += "\
     file://0001-pe32.h-add-header-structures-for-TE-and-DOS-executab.patch \
     file://0002-shim-add-needed-data-structures.patch \
@@ -21,7 +25,7 @@ SRC_URI += "\
     file://grub-efi.cfg \
     file://boot-menu.inc \
     file://boot-menu-hddimg.inc \
-    file://grub-efi.patch \
+    ${GRUB_EFI_PATCH} \
     ${EXTRA_SRC_URI} \
 "
 
