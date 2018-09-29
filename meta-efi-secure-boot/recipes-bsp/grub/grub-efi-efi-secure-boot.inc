@@ -7,10 +7,15 @@ EXTRA_SRC_URI = "\
     ${@'file://efi-secure-boot.inc file://password.inc' if d.getVar('UEFI_SB', True) == '1' else ''} \
 "
 
+# We cannot yet use this patch for 32 bit systems.
+GRUB_EFI_PATCH = ""
+GRUB_EFI_PATCH_x86-64 = "file://grub-efi.patch"
+
 GRUB_MOKVERIFY_PATCH = " \
    file://mok2verify-support-to-verify-non-PE-file-with-PKCS-7.patch \
    file://mok2verify-multiboot.patch \
    file://verify-all-buffiles.patch \
+   ${GRUB_EFI_PATCH} \
 "
 
 SRC_URI_append_class-target += "\
@@ -32,7 +37,6 @@ SRC_URI_append_class-target += "\
     file://grub-efi.cfg \
     file://boot-menu.inc \
     ${@d.getVar('GRUB_MOKVERIFY_PATCH', True) if d.getVar('UEFI_SELOADER', True) == '1' else ''} \
-    file://grub-efi.patch \
     ${EXTRA_SRC_URI} \
 "
 
