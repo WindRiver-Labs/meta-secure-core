@@ -93,7 +93,10 @@ do_install_append_class-target() {
 
     # Install the stacked grub configs.
     install -d "${D}${EFI_BOOT_PATH}"
+
+    [ x"${@bb.utils.contains('DISTRO_FEATURES', 'ostree', '1', '0', d)}" != x"1" ] && {
     install -m 0600 "${WORKDIR}/grub-efi.cfg" "${D}${EFI_BOOT_PATH}/grub.cfg"
+    }
     install -m 0600 "$menu" "${D}${EFI_BOOT_PATH}"
     [ x"${UEFI_SB}" = x"1" ] && {
         install -m 0600 "${WORKDIR}/efi-secure-boot.inc" "${D}${EFI_BOOT_PATH}"
