@@ -2,7 +2,7 @@
 # loading image is changed to the chainloader command instead of
 # the linux command.
 
-menuentry "Wind River Linux LTS 18 Sample EFI boot" --unrestricted {
+menuentry "DISTRO_NAME_placeholder Sample EFI boot" --unrestricted {
     savedefault
     set fallback=1
     search --no-floppy --label --set=root boot
@@ -10,7 +10,7 @@ menuentry "Wind River Linux LTS 18 Sample EFI boot" --unrestricted {
     initrd /initrd
 }
 
-menuentry "Wind River Linux LTS 18 Sample EFI boot (Recovery)" --unrestricted {
+menuentry "DISTRO_NAME_placeholder Sample EFI boot (Recovery)" --unrestricted {
     search --no-floppy --label --set=root boot
     linux /bzImage_backup root=LABEL=root ro rootwait
     initrd /initrd_backup
