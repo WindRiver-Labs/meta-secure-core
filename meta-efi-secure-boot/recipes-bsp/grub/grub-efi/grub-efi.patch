@@ -1,5 +1,5 @@
 diff --git a/grub-core/lib/efi/mok2verify.c b/grub-core/lib/efi/mok2verify.c
-index 790efa0..8be4c18 100644
+index 790efa0..fb17de8 100644
 --- a/grub-core/lib/efi/mok2verify.c
 +++ b/grub-core/lib/efi/mok2verify.c
 @@ -55,6 +55,7 @@ typedef grub_efi_status_t
@@ -10,11 +10,10 @@ index 790efa0..8be4c18 100644
  				     const grub_efi_char16_t *path);
  
  typedef grub_efi_status_t
-@@ -112,6 +113,112 @@ grub_is_locked (void)
- 
+@@ -113,6 +114,112 @@ grub_is_locked (void)
  #pragma GCC diagnostic ignored "-Wvla"
  
-+grub_err_t
+ grub_err_t
 +_grub_verify_file_buffer (const char *path)
 +{
 +  grub_file_t file = NULL;
@@ -27,7 +26,7 @@ index 790efa0..8be4c18 100644
 +
 +  grub_dprintf ("linux", "Verifying file %s\n", path);
 +
-+  file = grub_file_open (path);
++  file = grub_file_open (path, GRUB_FILE_TYPE_LINUX_KERNEL);
 +  if (!file)
 +    return grub_errno;
 +
@@ -47,7 +46,7 @@ index 790efa0..8be4c18 100644
 +
 +  /*By now only supported p7b file veryfing*/
 +  sigpath = grub_xasprintf("%s.p7b", path);
-+  sigfile = grub_file_open (sigpath);
++  sigfile = grub_file_open (sigpath, GRUB_FILE_TYPE_SIGNATURE);
 +  if (!file) {
 +    grub_error (GRUB_ERR_BAD_OS, N_("Cannot find the signature file %s"),
 +                    sigpath);
@@ -120,20 +119,21 @@ index 790efa0..8be4c18 100644
 +  return GRUB_ERR_NONE;
 +} 
 +
- grub_err_t
++grub_err_t
  grub_verify_file (const char *path)
  {
+   efi_mok2_verify_protocol_t *mok2;
 diff --git a/grub-core/loader/i386/linux.c b/grub-core/loader/i386/linux.c
-index 486e420..96e2269 100644
+index e684300..7bd25e1 100644
 --- a/grub-core/loader/i386/linux.c
 +++ b/grub-core/loader/i386/linux.c
-@@ -676,55 +676,6 @@ grub_linux_unload (void)
+@@ -638,55 +638,6 @@ grub_linux_unload (void)
    return GRUB_ERR_NONE;
  }
  
 -#ifdef GRUB_MACHINE_EFI
 -static grub_err_t
--grub_verify_linux (const char *path)
+-grub_verify_linux (const char *path, enum grub_file_type type)
 -{
 -  grub_file_t file;
 -  grub_ssize_t size;
@@ -141,7 +141,7 @@ index 486e420..96e2269 100644
 -
 -  grub_dprintf ("linux", "Verifying kernel %s\n", path);
 -
--  file = grub_file_open (path);
+-  file = grub_file_open (path, type);
 -  if (!file)
 -    return grub_errno;
 -
@@ -174,7 +174,7 @@ index 486e420..96e2269 100644
 -}
 -#else
 -static grub_err_t
--grub_verify_linux (const char *path)
+-grub_verify_linux (const char *path, enum grub_file_type type)
 -{
 -  return GRUB_ERR_NONE;
 -}
@@ -183,11 +183,11 @@ index 486e420..96e2269 100644
  static grub_err_t
  grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
  		int argc, char *argv[])
-@@ -747,8 +698,20 @@ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
+@@ -709,8 +660,20 @@ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
        goto fail;
      }
  
--  if (grub_verify_linux (argv[0]))
+-  if (grub_verify_linux (argv[0], GRUB_FILE_TYPE_LINUX_KERNEL))
 -    goto fail;
 +#ifdef GRUB_MACHINE_EFI
 +    grub_dprintf ("linux", "Verifying kernel file %s\n", argv[0]);
@@ -204,10 +204,10 @@ index 486e420..96e2269 100644
 +    }
 +#endif
  
-   file = grub_file_open (argv[0]);
+   file = grub_file_open (argv[0], GRUB_FILE_TYPE_LINUX_KERNEL);
    if (! file)
 diff --git a/grub-core/loader/linux.c b/grub-core/loader/linux.c
-index edc6d24..b8eeaee 100644
+index bb312ac..71082f1 100644
 --- a/grub-core/loader/linux.c
 +++ b/grub-core/loader/linux.c
 @@ -297,10 +297,7 @@ grub_initrd_load (struct grub_linux_initrd_context *initrd_ctx,
@@ -223,7 +223,7 @@ index edc6d24..b8eeaee 100644
  	{
  	  grub_dprintf ("linux", "initrd %s verified\n", argv[i]);
 diff --git a/include/grub/efi/mok2verify.h b/include/grub/efi/mok2verify.h
-index 98ef2d4..298d315 100644
+index 98ef2d4..1efbd6b 100644
 --- a/include/grub/efi/mok2verify.h
 +++ b/include/grub/efi/mok2verify.h
 @@ -32,6 +32,7 @@
