@@ -398,6 +398,7 @@ RPM_FSK_PASSWORD = "$IMA_PASS"
 OSTREE_GPGID = "$gpg_key_name"
 OSTREE_GPG_PASSPHRASE = "$GPG_PASS"
 WR_KEYS_DIR = "$KEYS_DIR"
+RPM_KEYS_DIR = "$RPM_KEYS_DIR"
 
 ## Please save the values above to your local.conf
 EOF
