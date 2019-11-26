@@ -52,6 +52,12 @@ python () {
         gpg_path = d.getVar('TMPDIR', True) + '/.gnupg'
         d.setVar('GPG_PATH', gpg_path)
 
+    if len(gpg_path) > 80:
+        msg =  "The default GPG_PATH '%s'\n" % gpg_path
+        msg += "of %d characters is too long.\n" % len(gpg_path)
+        msg += "Due to GPG homedir path length limit, please set GPG_PATH shorter than 80 characters"
+        raise bb.parse.SkipRecipe(msg)
+
     if not os.path.exists(gpg_path):
         status, output = oe.utils.getstatusoutput('mkdir -m 0700 -p %s' % gpg_path)
         if status:
