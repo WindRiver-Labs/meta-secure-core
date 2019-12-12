@@ -2,7 +2,7 @@ DEPENDS_append_class-target += "\
     ${@bb.utils.contains("DISTRO_FEATURES", "efi-secure-boot", "sbsigntool-native", "", d)} \
     ${@bb.utils.contains("DISTRO_FEATURES", "efi-secure-boot", "libsign-native", "", d)} \
     openssl-native \
-    ${@bb.utils.contains("DISTRO_FEATURES", "efi-secure-boot", "efitools-native", "", d)} \
+    ${@bb.utils.contains("DISTRO_FEATURES", "efi-secure-boot", "efitools-native gnupg-native", "", d)} \
 "
 
 USER_KEY_SHOW_VERBOSE = "1"
