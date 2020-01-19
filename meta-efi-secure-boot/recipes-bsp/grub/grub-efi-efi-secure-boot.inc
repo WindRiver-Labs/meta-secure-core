@@ -120,6 +120,10 @@ do_install_append_class-target() {
     rm -f ${D}${EFI_BOOT_PATH}/${GRUB_TARGET}-efi/*.module
 }
 
+python do_sign_prepend_class-target() {
+    bb.build.exec_func("check_deploy_keys", d)
+}
+
 fakeroot python do_sign_class-target() {
     image_dir = d.getVar('D', True)
     efi_boot_path = d.getVar('EFI_BOOT_PATH', True)
@@ -138,7 +142,6 @@ fakeroot python do_sign_class-target() {
 python do_sign() {
 }
 addtask sign after do_install before do_deploy do_package
-do_sign[prefuncs] += "check_deploy_keys"
 
 fakeroot do_chownp7b() {
     chown root:root -R "${D}${EFI_BOOT_PATH}/grub.cfg.p7b"
