@@ -53,7 +53,7 @@ ima_evm_sign_rootfs () {
     # myuser ALL=(ALL) NOPASSWD:ALL for a single user.
 
     # Sign file with private IMA key. EVM not supported at the moment.
-     find ${IMA_EVM_ROOTFS_SIGNED} | xargs -d '\n' --no-run-if-empty --verbose evmctl ima_sign --hashalgo sha256 --key ${IMA_EVM_PRIVKEY} --pass="${RPM_FSK_PASSWORD}"
+     find ${IMA_EVM_ROOTFS_SIGNED} -print0 | xargs -0 -L 1 --no-run-if-empty --verbose evmctl ima_sign --hashalgo sha256 --key ${IMA_EVM_PRIVKEY} --pass="${RPM_FSK_PASSWORD}"
 }
 
 # Signing must run as late as possible in the do_rootfs task.
