@@ -19,7 +19,7 @@ DEPENDS += "openssl"
 PV = "0.3.2+git${SRCPV}"
 
 SRC_URI = "\
-    git://github.com/jiazhang0/libsign.git \
+    git://github.com/jiazhang0/libsign.git;branch=master;protocol=https \
 "
 SRCREV = "eb3a5927dd18e166014cf1e2eb6e9e461cf973fb"
 
